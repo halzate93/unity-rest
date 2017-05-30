@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Text;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -83,24 +84,34 @@ namespace UnityRest
         internal IEnumerator SendRoutine ()
         {
             string url = BuildURL ();
-            UnityWebRequest internalRequest = BuildInternalRequest (url);
+            UnityWebRequest internalRequest = BuildInternalRequest (url, body);
             if (headers != null)
                 SetHeaders (internalRequest);
             yield return internalRequest.Send ();
             HandleResult (internalRequest);
         }
 
-        private UnityWebRequest BuildInternalRequest (string url)
+        private UnityWebRequest BuildInternalRequest (string url, string body)
         {
             switch (verb)
             {
                 case HttpVerb.Get:
                     return UnityWebRequest.Get (url);
                 case HttpVerb.Post:
-                    return UnityWebRequest.Post (url, body);
+                    return BuildPostRequest (url, body);
                 default:
                     return null;
             }
+        }
+
+        private UnityWebRequest BuildPostRequest (string url, string body)
+        {
+            UnityWebRequest request = new UnityWebRequest (url);
+            byte[] data = Encoding.UTF8.GetBytes (body);
+            request.uploadHandler = new UploadHandlerRaw (data);
+            request.uploadHandler.contentType = "application/json";
+            request.downloadHandler = new DownloadHandlerBuffer ();
+            return request;
         }
 
         private string BuildURL ()

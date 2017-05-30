@@ -22,7 +22,7 @@ public class Test : MonoBehaviour
 
 	public void GetAll ()
 	{
-		api.Get<Post> ().OnResult<Post> (LogAll).Send ();
+		api.Get<Post> ("posts").OnResult<Post> (LogAll).Send ();
 	}
 
 	public void GetOne ()
