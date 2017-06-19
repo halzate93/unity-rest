@@ -12,6 +12,7 @@ namespace UnityRest
         private Dictionary<string, string> headers;
         private string baseUrl;
         private string endpoint;
+        private string resource;
         private ObjectId id;
         private string body;
         private HttpVerb verb;
@@ -43,6 +44,12 @@ namespace UnityRest
         public UnityRestRequest WithId (ObjectId id)
         {
             this.id = id;
+            return this;
+        }
+
+        public UnityRestRequest WithResource (string resource)
+        {
+            this.resource = resource;
             return this;
         }
 
@@ -119,6 +126,8 @@ namespace UnityRest
             string url = string.Format ("{0}/{1}", baseUrl, endpoint);
             if (id != null)
                 url = string.Format ("{0}/{1}", url, id.value);
+            if (resource != null)
+                url = string.Format ("{0}/{1}",url, resource);
             return url;
         }
 
